@@ -3,7 +3,7 @@
 
 ## This fork:
 1. Adds `genre` and `album_artist` tags
-2. Add support for `dzr.page.link` when downloading
+2. Adds support for `dzr.page.link` when downloading
 
 # Getting started
 ## Prerequisites
