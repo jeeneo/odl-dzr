@@ -5,11 +5,11 @@
 1. Adds `genre` and `album_artist` tags
 2. Adds support for `dzr.page.link` when downloading
 
-# Getting started
-## Prerequisites
+## Getting started
+### Prerequisites
 - [OrpheusDL](https://github.com/yarrm80s/orpheusdl), duh
 
-## Installation
+### Installation
 - Clone the repository from your ```orpheusdl``` directory:\
 ```
 git clone https://github.com/jeeneo/odl-dzr modules/deezer
@@ -17,8 +17,8 @@ git clone https://github.com/jeeneo/odl-dzr modules/deezer
 - Update ```config/settings.json``` with Deezer settings:\
 ```python orpheus.py```
 
-# Configuration
-## Global
+## Configuration
+### Global
 ```download_quality```:
 | Value      | Format              |
 | ---------- | ------------------- |
@@ -33,7 +33,7 @@ git clone https://github.com/jeeneo/odl-dzr modules/deezer
 Maxes out at 3000px\
 If original cover size is smaller than the one specified, falls back to 1200px
 
-## Deezer
+### Deezer
 | Setting         | Description                                         |
 | --------------- | --------------------------------------------------- |
 | `client_id`     | Client ID used for login                            |
