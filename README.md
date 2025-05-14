@@ -4,6 +4,7 @@
 ## This fork:
 1. Adds `genre` and `album_artist` tags
 2. Adds support for `dzr.page.link` when downloading
+3. TheKTV's fixes as well (supports ARLs)
 
 ## Getting started
 ### Prerequisites
@@ -18,7 +19,10 @@ git clone https://github.com/jeeneo/odl-dzr modules/deezer
 - `python orpheus.py`
 
 ## Configuration
-### Global
+
+<details>
+<summary>Global</summary>
+
 `download_quality`:
 | Value      | Format              |
 | ---------- | ------------------- |
@@ -30,10 +34,14 @@ git clone https://github.com/jeeneo/odl-dzr modules/deezer
 | "minimum"  | MP3 128kbps         |
 
 `main_resolution`:
-Maxes out at 3000px
-If original cover size is smaller than the one specified, falls back to 1200px
+Maxes out at `3000px`
+(if original cover size is smaller than the one specified, falls back to 1200px)
 
-### Deezer
+</details>
+
+<details>
+<summary>Deezer</summary>
+
 | Setting         | Description                                         |
 | --------------- | --------------------------------------------------- |
 | `client_id`     | Client ID used for login                            |
@@ -41,3 +49,5 @@ If original cover size is smaller than the one specified, falls back to 1200px
 | `bf_secret`     | Constant for deriving key used for track decryption |
 | `email`         | Account email                                       |
 | `password`      | Account password                                    |
+
+</details>
