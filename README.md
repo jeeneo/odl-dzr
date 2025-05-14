@@ -58,7 +58,7 @@ If original cover size is smaller than the one specified, falls back to 1200px
 
 [@uhwot](https://github.com/uhwot) for the module base
 
-[@TheKVT](https://github.com/TheKVT) the edits (ARL support and misc fixes)
+[@TheKVT](https://github.com/TheKVT) their edits (ARL support and misc fixes)
   
 [@OrfiTeam](https://github.com/OrfiTeam) for OrpheusDL
 
