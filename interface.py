@@ -11,10 +11,11 @@ module_information = ModuleInformation(
     service_name = 'Deezer',
     module_supported_modes = ModuleModes.download | ModuleModes.lyrics | ModuleModes.covers | ModuleModes.credits,
     global_settings = {'client_id': '447462', 'client_secret': 'a83bf7f38ad2f137e444727cfc3775cf', 'bf_secret': ''},
-    session_settings = {'email': '', 'password': ''},
+    session_settings = {'email': '', 'password': '', 'arl': ''},
     session_storage_variables = ['arl'],
-    netlocation_constant = ['deezer', 'dzr'],
+    netlocation_constant = ['deezer', 'dzr.page.link'], # add support for dzr.page.link
     url_decoding = ManualEnum.manual,
+    login_behaviour = ManualEnum.manual,
     test_url = 'https://www.deezer.com/track/3135556',
 )
 
@@ -37,12 +38,6 @@ class ModuleInterface:
             self.default_cover.file_type = ImageFileTypeEnum.jpg
 
         self.session = DeezerAPI(self.exception, self.settings['client_id'], self.settings['client_secret'], self.settings['bf_secret'])
-        arl = module_controller.temporary_settings_controller.read('arl')
-        if arl:
-            try:
-                self.session.login_via_arl(arl)
-            except self.exception:
-                self.login(self.settings['email'], self.settings['password'])
 
         self.quality_parse = {
             QualityEnum.MINIMUM: 'MP3_128',
@@ -57,19 +52,37 @@ class ModuleInterface:
             CoverCompressionEnum.high: 80,
             CoverCompressionEnum.low: 50
         }
-        if arl:
-            self.check_sub()
 
-    def login(self, email: str, password: str):
-        arl, _ = self.session.login_via_email(email, password)
+        arl = module_controller.temporary_settings_controller.read('arl')
+
+        if not arl:
+            self.login(self.settings['email'], self.settings['password'], self.settings['arl'] or arl)
+        else:
+            # swap between arls without removing loginstorage.bin each time
+            if arl != self.settings['arl']:
+                self.login(self.settings['email'], self.settings['password'], self.settings['arl'] or arl)
+            else:
+                self.session.login_via_arl(arl)
+                self.check_sub()
+
+    def login(self, email: str, password: str, arl: str):
+        if email and password:
+            print('Logging in using email/pass...')
+            arl, _ = self.session.login_via_email(email, password)
+        elif arl:
+            print('Logging in using arl...')
+            self.session.login_via_arl(arl)
+        else:
+            raise self.exception('credentials/arl is empty or missing, check settings.json')
+
         self.tsc.set('arl', arl)
         self.check_sub()
-
+    
     def custom_url_parse(self, link):
         url = urlparse(link)
 
-        if url.hostname == 'dzr.page.link':
-            r = get('https://dzr.page.link' + url.path, allow_redirects=False)
+        if url.hostname in ('deezer.page.link', 'dzr.page.link'): # new deezer share link
+            r = get(f'https://{url.hostname}{url.path}', allow_redirects=False)
             if r.status_code != 302:
                 raise self.exception(f'Invalid URL: {link}')
             url = urlparse(r.headers['Location'])
@@ -86,7 +99,7 @@ class ModuleInterface:
     def get_track_info(self, track_id: str, quality_tier: QualityEnum, codec_options: CodecOptions, data={}, alb_tags={}) -> TrackInfo:
         is_user_upped = int(track_id) < 0
         format = self.quality_parse[quality_tier] if not is_user_upped else 'MP3_MISC'
-
+        
         track = None
         if data and track_id in data:
             track = data[track_id]
@@ -101,6 +114,30 @@ class ModuleInterface:
         if 'FALLBACK' in t_data:
             t_data = t_data['FALLBACK']
 
+        album_artist = None
+
+        if not is_user_upped:
+            try:
+                # fetch from album data
+                album = self.session.get_album(t_data['ALB_ID'])
+                album_data = album['DATA']
+                if 'ART_NAME' in album_data:
+                    album_artist = album_data['ART_NAME']
+                    # print("DEBUG: Found album artist in album data:", album_artist)
+            except Exception as e:
+                print(f"DEBUG: Error while fetching album artist: {str(e)}")
+                album_artist = None
+
+        # fetch genres from the album and set as the genre tag
+        genres = []
+        if t_data['ALB_ID']:
+            try:
+                genres = self.session.get_album_genres(t_data['ALB_ID'])
+                # print("DEBUG: Genres fetched for album:", genres)
+            except Exception as e:
+                print(f"DEBUG: Error while fetching genres: {str(e)}")
+
+        # add album_artist and genres
         tags = Tags(
             track_number = t_data.get('TRACK_NUMBER'),
             copyright = t_data.get('COPYRIGHT'),
@@ -108,11 +145,13 @@ class ModuleInterface:
             disc_number = t_data.get('DISK_NUMBER'),
             replay_gain = t_data.get('GAIN'),
             release_date = t_data.get('PHYSICAL_RELEASE_DATE'),
+            album_artist = album_artist,
+            genres = genres
         )
 
         for key in alb_tags:
             setattr(tags, key, alb_tags[key])
-
+        
         error = None
         if is_user_upped:
             if not t_data['RIGHTS']['STREAM_ADS_AVAILABLE']:
@@ -123,7 +162,7 @@ class ModuleInterface:
             if not countries:
                 error = 'Track not available'
             elif self.session.country not in countries:
-                error = 'Track not available in your country'
+                error = f"Your country: {self.session.country} - Track is only available in the following countries: {', '.join(countries)}"
             else:
                 formats_to_check = premium_formats
                 while len(formats_to_check) != 0:
@@ -165,6 +204,9 @@ class ModuleInterface:
             'format': format,
         }
 
+        # print("DEBUG: t_data keys:", list(t_data.keys()))
+        # print("DEBUG: t_data sample:", {k: t_data[k] for k in list(t_data.keys())})
+
         return TrackInfo(
             name = t_data['SNG_TITLE'] if not t_data.get('VERSION') else f'{t_data["SNG_TITLE"]} {t_data["VERSION"]}',
             album_id = t_data['ALB_ID'],
@@ -188,9 +230,7 @@ class ModuleInterface:
 
     def get_track_download(self, id, track_token, track_token_expiry, format):
         path = create_temp_filename()
-
         url = self.session.get_track_url(id, track_token, track_token_expiry, format)
-
         self.session.dl_track(id, url, path)
 
         return TrackDownloadInfo(
@@ -358,6 +398,7 @@ class ModuleInterface:
             ImageFileTypeEnum.png: f'{res}x0-none-100-0-0.png'
         }[file_type]
 
+        # also cdns-images.dzcdn.net can also be used
         return f'https://cdn-images.dzcdn.net/images/{img_type.name}/{md5}/{filename}'
 
     def check_sub(self):
