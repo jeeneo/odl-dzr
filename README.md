@@ -10,16 +10,16 @@
 - [OrpheusDL](https://github.com/yarrm80s/orpheusdl), duh
 
 ### Installation
-- Clone the repository from your ```orpheusdl``` directory:\
+- Clone the repository in your `orpheusdl` (root) directory:
 ```
 git clone https://github.com/jeeneo/odl-dzr modules/deezer
 ```
-- Update ```config/settings.json``` with Deezer settings:\
-```python orpheus.py```
+- Update `config/settings.json` with Deezer settings:
+- `python orpheus.py`
 
 ## Configuration
 ### Global
-```download_quality```:
+`download_quality`:
 | Value      | Format              |
 | ---------- | ------------------- |
 | "hifi"     | 16-bit 44.1kHz FLAC |
@@ -29,8 +29,8 @@ git clone https://github.com/jeeneo/odl-dzr modules/deezer
 | "low"      | MP3 128kbps         |
 | "minimum"  | MP3 128kbps         |
 
-```main_resolution```:\
-Maxes out at 3000px\
+`main_resolution`:
+Maxes out at 3000px
 If original cover size is smaller than the one specified, falls back to 1200px
 
 ### Deezer
