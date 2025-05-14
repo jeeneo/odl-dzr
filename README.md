@@ -1,14 +1,13 @@
 # odl-dzr
-[OrpheusDL](https://github.com/yarrm80s/orpheusdl) module for downloading music from [Deezer](https://www.deezer.com/)
+[OrpheusDL](https://github.com/OrfiTeam/OrpheusDL) module for downloading music from [Deezer](https://www.deezer.com/)
 
 ## This fork:
 1. Adds `genre` and `album_artist` tags
 2. Adds support for `dzr.page.link` when downloading
-3. TheKTV's fixes as well (supports ARLs)
 
 ## Getting started
 ### Prerequisites
-- [OrpheusDL](https://github.com/yarrm80s/orpheusdl), duh
+- [OrpheusDL](https://github.com/OrfiTeam/OrpheusDL), duh
 
 ### Installation
 - Clone the repository in your `orpheusdl` (root) directory:
@@ -34,8 +33,8 @@ git clone https://github.com/jeeneo/odl-dzr modules/deezer
 | "minimum"  | MP3 128kbps         |
 
 `main_resolution`:
-Maxes out at `3000px`
-(if original cover size is smaller than the one specified, falls back to 1200px)
+Maxes out at 3000px  
+If original cover size is smaller than the one specified, falls back to 1200px
 
 </details>
 
@@ -49,5 +48,18 @@ Maxes out at `3000px`
 | `bf_secret`     | Constant for deriving key used for track decryption |
 | `email`         | Account email                                       |
 | `password`      | Account password                                    |
+
+</details>
+
+
+## Credits
+<details>
+<summary>Credits</summary>
+
+[@uhwot](https://github.com/uhwot) for the module base
+
+[@TheKVT](https://github.com/TheKVT) the edits
+  
+[@OrfiTeam](https://github.com/OrfiTeam) for OrpheusDL
 
 </details>
