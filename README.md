@@ -1,5 +1,9 @@
-# orpheusdl-deezer
+# odl-dzr
 [OrpheusDL](https://github.com/yarrm80s/orpheusdl) module for downloading music from [Deezer](https://www.deezer.com/)
+
+## This fork:
+1. Adds `genre` and `album_artist` tags
+2. Add support for `dzr.page.link` when downloading
 
 # Getting started
 ## Prerequisites
@@ -7,7 +11,9 @@
 
 ## Installation
 - Clone the repository from your ```orpheusdl``` directory:\
-```git clone https://github.com/uhwot/orpheusdl-deezer modules/deezer```
+```
+git clone https://github.com/uhwot/orpheusdl-deezer modules/deezer
+```
 - Update ```config/settings.json``` with Deezer settings:\
 ```python orpheus.py```
 
