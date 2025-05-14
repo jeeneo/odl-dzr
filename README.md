@@ -12,7 +12,7 @@
 ## Installation
 - Clone the repository from your ```orpheusdl``` directory:\
 ```
-git clone https://github.com/uhwot/orpheusdl-deezer modules/deezer
+git clone https://github.com/jeeneo/odl-dzr modules/deezer
 ```
 - Update ```config/settings.json``` with Deezer settings:\
 ```python orpheus.py```
