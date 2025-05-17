@@ -13,7 +13,7 @@ module_information = ModuleInformation(
     global_settings = {'client_id': '447462', 'client_secret': 'a83bf7f38ad2f137e444727cfc3775cf', 'bf_secret': ''},
     session_settings = {'email': '', 'password': '', 'arl': ''},
     session_storage_variables = ['arl'],
-    netlocation_constant = ['deezer', 'dzr.page.link'], # add support for dzr.page.link
+    netlocation_constant = ['deezer', 'dzr'], # add support for dzr.page.link
     url_decoding = ManualEnum.manual,
     login_behaviour = ManualEnum.manual,
     test_url = 'https://www.deezer.com/track/3135556',
@@ -398,8 +398,8 @@ class ModuleInterface:
             ImageFileTypeEnum.png: f'{res}x0-none-100-0-0.png'
         }[file_type]
 
-        # also cdns-images.dzcdn.net can also be used
-        return f'https://cdn-images.dzcdn.net/images/{img_type.name}/{md5}/{filename}'
+        # also cdn-images.dzcdn.net can also be used
+        return f'https://cdns-images.dzcdn.net/images/{img_type.name}/{md5}/{filename}'
 
     def check_sub(self):
         if not self.disable_subscription_check and (self.format not in self.session.available_formats):
